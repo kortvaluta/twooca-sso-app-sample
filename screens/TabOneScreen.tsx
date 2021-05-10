@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Button } from 'react-native';
-
-import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
-
 import * as AppAuth from 'expo-app-auth'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -30,7 +27,6 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
       {!accessToken ? (
         <Button
           title="Sign In with TwooCa" 
@@ -41,8 +37,9 @@ export default function TabOneScreen() {
           }}
         />
       ) : (
-        <View>
-          <Text>access token: {accessToken}</Text>
+        <View style={styles.container}>
+          <Text style={styles.title}>access token</Text>
+          <Text>{accessToken}</Text>
           <Button
             title="Sign Out"
             onPress={async () => {
@@ -52,8 +49,6 @@ export default function TabOneScreen() {
           />
         </View>
       )}
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
     </View>
   );
 }
@@ -67,10 +62,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
   },
 });
