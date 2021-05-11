@@ -3,6 +3,7 @@ import { StyleSheet, Button } from 'react-native';
 import { Text, View } from '../components/Themed';
 import * as AppAuth from 'expo-app-auth'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants'
 
 export default function TabOneScreen() {
   const [accessToken, setAccessToken] = React.useState<string | null>(null)
@@ -17,12 +18,12 @@ export default function TabOneScreen() {
   const authConfig = {
     issuer: '',
     serviceConfiguration: {
-      authorizationEndpoint: 'http://localhost:3000/oauth/authorize',
-      tokenEndpoint: 'http://localhost:3000/oauth/token'
+      authorizationEndpoint: `${Constants.manifest.extra!.twooca.baseUrl}/oauth/authorize`,
+      tokenEndpoint: `${Constants.manifest.extra!.twooca.baseUrl}/oauth/token`
     },
-    clientId: 'yGY3Mwm3Vo86-viGkM_YTcQmFTj8P7FnckU_vMk4xfw',
-    clientSecret: 'JXnr2WHkWmnpUrvthCw6ooyvwA-9_JKYz2sK2pB1qb4',
-    redirectUrl: 'exp://127.0.0.1:19000/'
+    clientId: Constants.manifest.extra!.twooca.clientId,
+    clientSecret: Constants.manifest.extra!.twooca.clientSecret,
+    redirectUrl: Constants.manifest.extra!.twooca.oauthRedirectUrl
   }
 
   return (

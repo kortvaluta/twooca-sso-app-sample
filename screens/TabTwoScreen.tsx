@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Button, Alert, TextInput } from 'react-native';
 import { Text, View } from '../components/Themed';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants'
 
 async function getAccessToken() {
   const accessToken = await AsyncStorage.getItem('@twooca_access_token')
@@ -18,7 +19,7 @@ interface HasBalance {
 
 async function getVisaBalance() {
   const accessToken = await getAccessToken()
-  const response = await fetch('http://localhost:3000/api/v1/mobile/visa_balances/balance', {
+  const response = await fetch(`${Constants.manifest.extra!.twooca.baseUrl}/api/v1/mobile/visa_balances/balance`, {
     headers: {
       Authorization: `Bearer ${accessToken}`
     }
@@ -33,10 +34,11 @@ async function getVisaBalance() {
 
 async function transferVisaBalance(externalUid: string, amount: number) {
   const accessToken = await getAccessToken()
-  const response = await fetch('http://localhost:3000/api/v1/mobile/visa_balances/transfer', {
+  const response = await fetch(`${Constants.manifest.extra!.twooca.baseUrl}/api/v1/mobile/visa_balances/transfer`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       external_uid: externalUid,
@@ -44,9 +46,7 @@ async function transferVisaBalance(externalUid: string, amount: number) {
     })
   })
 
-  if (response.ok) {
-    return await response.json() as HasBalance
-  } else {
+  if (!response.ok) {
     throw Error(await response.text())
   }
 }
@@ -97,8 +97,8 @@ export default function TabTwoScreen() {
         onPress={async() => {
           if (externalUid && amount) {
             try {
-              const { balance } = await transferVisaBalance(externalUid, amount)
-              setBalance(balance)
+              await transferVisaBalance(externalUid, amount)
+              setBalance(balance! + amount)
               setAmount(null)
             } catch (e) {
               Alert.alert(e.message)
